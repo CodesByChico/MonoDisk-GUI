@@ -6,7 +6,7 @@ local MonoDisk = {}
 function MonoDisk:CreateWindow(config)
     local Window = {}
 
-   
+    
     local ScreenGui = Instance.new("ScreenGui")
     ScreenGui.Parent = game:GetService("CoreGui")
     ScreenGui.Name = config.Name or "MonoDisk Gui"
@@ -21,7 +21,7 @@ function MonoDisk:CreateWindow(config)
     MainFrame.Draggable = true
     MainFrame.Parent = ScreenGui
 
-    
+
     local TopBar = Instance.new("Frame")
     TopBar.Size = UDim2.new(1, 0, 0, 30)
     TopBar.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
@@ -38,6 +38,29 @@ function MonoDisk:CreateWindow(config)
     Title.TextSize = 16
     Title.TextXAlignment = Enum.TextXAlignment.Left
     Title.Parent = TopBar
+
+    
+    local Notification = Instance.new("TextLabel")
+    Notification.Size = UDim2.new(0, 250, 0, 40)
+    Notification.Position = UDim2.new(0.5, -125, 0.5, -20)
+    Notification.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    Notification.BackgroundTransparency = 0.3
+    Notification.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Notification.Text = "Press 'Right Control' to reopen GUI"
+    Notification.Font = Enum.Font.GothamBold
+    Notification.TextSize = 14
+    Notification.Parent = ScreenGui
+
+
+    task.spawn(function()
+        wait(3)
+        for i = 1, 10 do
+            Notification.TextTransparency = i * 0.1
+            Notification.BackgroundTransparency = 0.3 + (i * 0.07)
+            wait(0.1)
+        end
+        Notification:Destroy()
+    end)
 
     
     local CloseButton = Instance.new("TextButton")
@@ -71,7 +94,6 @@ function MonoDisk:CreateWindow(config)
         MainFrame.Visible = not isMinimized
     end)
 
-    
     UserInputService.InputBegan:Connect(function(input, gameProcessed)
         if input.KeyCode == Enum.KeyCode.RightControl and not gameProcessed then
             isMinimized = not isMinimized
@@ -79,7 +101,7 @@ function MonoDisk:CreateWindow(config)
         end
     end)
 
-    -- Botão Aumentar (📏)
+    
     local ResizeButton = Instance.new("TextButton")
     ResizeButton.Size = UDim2.new(0, 30, 1, 0)
     ResizeButton.Position = UDim2.new(1, -90, 0, 0)
@@ -96,7 +118,7 @@ function MonoDisk:CreateWindow(config)
     ResizeButton.MouseButton1Click:Connect(function()
         isMaximized = not isMaximized
         if isMaximized then
-            MainFrame.Size = UDim2.new(0, 600, 0, 450) -- Aumentado
+            MainFrame.Size = UDim2.new(0, 600, 0, 450)
         else
             MainFrame.Size = originalSize
         end
