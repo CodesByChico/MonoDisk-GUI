@@ -83,7 +83,7 @@ function MonoDisk:CreateWindow(title)
     local ToggleButton = Instance.new("ImageButton")
     ToggleButton.Size = UDim2.new(0, 50, 0, 50)
     ToggleButton.Position = UDim2.new(0, 10, 0, 10)  -- Canto superior esquerdo da tela
-    ToggleButton.Image = "rbxassetid://PUT_YOUR_IMAGE_ID_HERE"  -- Defina o ID da imagem do botão
+    ToggleButton.Image = "rbxassetid://12549472584"  -- Defina o ID da imagem do botão
     ToggleButton.BackgroundTransparency = 1
     ToggleButton.Parent = ScreenGui
 
