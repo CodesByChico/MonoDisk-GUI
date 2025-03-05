@@ -1,127 +1,28 @@
-local HttpService = game:GetService("HttpService")
-local UserInputService = game:GetService("UserInputService")
-local RunService = game:GetService("RunService")
-
 local MonoDisk = {}
 
-function MonoDisk:CreateWindow(config, key, useKeySystem, showDiscordLink, showCopyKeyButton)
+function MonoDisk:CreateWindow(config)
     local Window = {}
 
-    local keyValidationUrl = "https://yourserver.com/validateKey" 
+    -- Configuração do tema e outros parâmetros
+    local Name = config.Name or "MonoDisk Gui"
+    local Icon = config.Icon or 0
+    local LoadingTitle = config.LoadingTitle or "MonoDisk Interface Suite"
+    local LoadingSubtitle = config.LoadingSubtitle or "by HpLowes"
+    local Theme = config.Theme or "Default"
+    local DisablePrompts = config.DisableMonoDiskPrompts or false
+    local DisableBuildWarnings = config.DisableBuildWarnings or false
 
-    local isKeyValid = false
+    -- Configuração do sistema de chave
+    local KeySystem = config.KeySystem or false
+    local KeySettings = config.KeySettings or {}
 
-    local function validateKey(inputKey)
-        local success, response = pcall(function()
-            local requestData = HttpService:JSONEncode({ key = inputKey })
-            local response = HttpService:PostAsync(keyValidationUrl, requestData, Enum.HttpContentType.ApplicationJson)
-            return HttpService:JSONDecode(response)
-        end)
-
-        if success then
-            return response.isValid
-        else
-            return false
-        end
-    end
-
-    local function createKeyScreen()
-        local KeyScreen = Instance.new("ScreenGui")
-        KeyScreen.Parent = game:GetService("CoreGui")
-
-        local Frame = Instance.new("Frame")
-        Frame.Size = UDim2.new(0, 400, 0, 250)
-        Frame.Position = UDim2.new(0.5, -200, 0.5, -125)
-        Frame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-        Frame.BorderSizePixel = 0
-        Frame.Parent = KeyScreen
-
-        local Title = Instance.new("TextLabel")
-        Title.Size = UDim2.new(1, 0, 0.2, 0)
-        Title.BackgroundTransparency = 1
-        Title.Text = "Enter the Key"
-        Title.TextColor3 = Color3.fromRGB(255, 255, 255)
-        Title.Font = Enum.Font.GothamBold
-        Title.TextSize = 18
-        Title.TextXAlignment = Enum.TextXAlignment.Center
-        Title.Parent = Frame
-
-        local KeyInput = Instance.new("TextBox")
-        KeyInput.Size = UDim2.new(1, -20, 0.3, 0)
-        KeyInput.Position = UDim2.new(0, 10, 0.3, 10)
-        KeyInput.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-        KeyInput.TextColor3 = Color3.fromRGB(255, 255, 255)
-        KeyInput.Font = Enum.Font.Gotham
-        KeyInput.TextSize = 16
-        KeyInput.PlaceholderText = "Enter Key..."
-        KeyInput.Text = ""
-        KeyInput.Parent = Frame
-
-        local SubmitButton = Instance.new("TextButton")
-        SubmitButton.Size = UDim2.new(1, -20, 0.2, 0)
-        SubmitButton.Position = UDim2.new(0, 10, 0.8, -10)
-        SubmitButton.BackgroundColor3 = Color3.fromRGB(100, 150, 250)
-        SubmitButton.Text = "Submit"
-        SubmitButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-        SubmitButton.Font = Enum.Font.GothamBold
-        SubmitButton.TextSize = 16
-        SubmitButton.Parent = Frame
-
-        SubmitButton.MouseButton1Click:Connect(function()
-            local inputKey = KeyInput.Text
-            if validateKey(inputKey) then
-                isKeyValid = true
-                KeyScreen:Destroy()
-                createMainGui()
-            else
-                KeyInput.Text = ""
-                KeyInput.PlaceholderText = "Incorrect Key! Try again."
-            end
-        end)
-
-        if showCopyKeyButton then
-            local CopyButton = Instance.new("TextButton")
-            CopyButton.Size = UDim2.new(0, 100, 0, 30)
-            CopyButton.Position = UDim2.new(0.5, -50, 0.8, 30)
-            CopyButton.BackgroundColor3 = Color3.fromRGB(50, 150, 50)
-            CopyButton.Text = "Copy Key"
-            CopyButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-            CopyButton.Font = Enum.Font.GothamBold
-            CopyButton.TextSize = 16
-            CopyButton.Parent = Frame
-
-            CopyButton.MouseButton1Click:Connect(function()
-                setclipboard(key)
-            end)
-        end
-
-        if showDiscordLink then
-            local DiscordButton = Instance.new("TextButton")
-            DiscordButton.Size = UDim2.new(0, 100, 0, 30)
-            DiscordButton.Position = UDim2.new(0.5, -50, 0.8, 70)
-            DiscordButton.BackgroundColor3 = Color3.fromRGB(0, 90, 200)
-            DiscordButton.Text = "Join Discord"
-            DiscordButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-            DiscordButton.Font = Enum.Font.GothamBold
-            DiscordButton.TextSize = 16
-            DiscordButton.Parent = Frame
-
-            DiscordButton.MouseButton1Click:Connect(function()
-                local discordLink = "https://discord.gg/yourserverlink"
-                setclipboard(discordLink)
-                game:GetService("TextChatService"):Chat(game.Players.LocalPlayer, "Copied Discord link!")
-            end)
-        end
-    end
+    local Discord = config.Discord or {}
+    local ConfigurationSaving = config.ConfigurationSaving or {}
 
     local function createMainGui()
-        if not isKeyValid and useKeySystem then
-            return
-        end
-
         local ScreenGui = Instance.new("ScreenGui")
         ScreenGui.Parent = game:GetService("CoreGui")
-        ScreenGui.Name = config.Name or "MonoDisk Gui"
+        ScreenGui.Name = Name
 
         local MainFrame = Instance.new("Frame")
         MainFrame.Size = UDim2.new(0, 400, 0, 300)
@@ -141,7 +42,7 @@ function MonoDisk:CreateWindow(config, key, useKeySystem, showDiscordLink, showC
         Title.Size = UDim2.new(1, -90, 1, 0)
         Title.Position = UDim2.new(0, 10, 0, 0)
         Title.BackgroundTransparency = 1
-        Title.Text = config.Name or "MonoDisk Gui"
+        Title.Text = Name
         Title.TextColor3 = Color3.fromRGB(255, 255, 255)
         Title.Font = Enum.Font.Gotham
         Title.TextSize = 16
@@ -170,7 +71,69 @@ function MonoDisk:CreateWindow(config, key, useKeySystem, showDiscordLink, showC
         return Window
     end
 
-    if useKeySystem then
+    -- Função para criar o sistema de chave
+    local function createKeyScreen()
+        if KeySystem then
+            local KeyScreen = Instance.new("ScreenGui")
+            KeyScreen.Parent = game:GetService("CoreGui")
+
+            local Frame = Instance.new("Frame")
+            Frame.Size = UDim2.new(0, 400, 0, 250)
+            Frame.Position = UDim2.new(0.5, -200, 0.5, -125)
+            Frame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+            Frame.BorderSizePixel = 0
+            Frame.Parent = KeyScreen
+
+            local Title = Instance.new("TextLabel")
+            Title.Size = UDim2.new(1, 0, 0.2, 0)
+            Title.BackgroundTransparency = 1
+            Title.Text = KeySettings.Title or "Enter the Key"
+            Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+            Title.Font = Enum.Font.GothamBold
+            Title.TextSize = 18
+            Title.TextXAlignment = Enum.TextXAlignment.Center
+            Title.Parent = Frame
+
+            local KeyInput = Instance.new("TextBox")
+            KeyInput.Size = UDim2.new(1, -20, 0.3, 0)
+            KeyInput.Position = UDim2.new(0, 10, 0.3, 10)
+            KeyInput.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+            KeyInput.TextColor3 = Color3.fromRGB(255, 255, 255)
+            KeyInput.Font = Enum.Font.Gotham
+            KeyInput.TextSize = 16
+            KeyInput.PlaceholderText = KeySettings.Note or "Enter Key..."
+            KeyInput.Text = ""
+            KeyInput.Parent = Frame
+
+            local SubmitButton = Instance.new("TextButton")
+            SubmitButton.Size = UDim2.new(1, -20, 0.2, 0)
+            SubmitButton.Position = UDim2.new(0, 10, 0.8, -10)
+            SubmitButton.BackgroundColor3 = Color3.fromRGB(100, 150, 250)
+            SubmitButton.Text = "Submit"
+            SubmitButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+            SubmitButton.Font = Enum.Font.GothamBold
+            SubmitButton.TextSize = 16
+            SubmitButton.Parent = Frame
+
+            SubmitButton.MouseButton1Click:Connect(function()
+                local inputKey = KeyInput.Text
+                local validKeys = KeySettings.Key or {}
+
+                for _, key in pairs(validKeys) do
+                    if inputKey == key then
+                        KeyScreen:Destroy()
+                        createMainGui()
+                        return
+                    end
+                end
+
+                KeyInput.Text = ""
+                KeyInput.PlaceholderText = "Incorrect Key! Try again."
+            end)
+        end
+    end
+
+    if KeySystem then
         createKeyScreen()
     else
         createMainGui()
