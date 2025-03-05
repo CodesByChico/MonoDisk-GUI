@@ -1,100 +1,124 @@
--- MonoDisk Gui Library
+local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
 
 local MonoDisk = {}
-MonoDisk.__index = MonoDisk
 
--- Função para criar a janela da MonoDisk Gui
-function MonoDisk:CreateWindow(options)
+function MonoDisk:CreateWindow(config)
     local Window = {}
 
-    -- Definições iniciais
-    Window.Name = options.Name or "MonoDisk Window"
-    Window.Icon = options.Icon or 0
-    Window.LoadingTitle = options.LoadingTitle or "Loading..."
-    Window.LoadingSubtitle = options.LoadingSubtitle or "by HpLowes"
-    Window.Theme = options.Theme or "Default"
+    local ScreenGui = Instance.new("ScreenGui")
+    ScreenGui.Parent = game:GetService("CoreGui")
+    ScreenGui.Name = config.Name or "MonoDisk Gui"
 
-    -- Criação da UI da janela
-    Window.UI = Instance.new("ScreenGui")
-    Window.Frame = Instance.new("Frame", Window.UI)
-    Window.Frame.Size = UDim2.new(0, 500, 0, 300)
-    Window.Frame.Position = UDim2.new(0.5, -250, 0.5, -150)
-    Window.Frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-    Window.Frame.BorderSizePixel = 0
+    local MainFrame = Instance.new("Frame")
+    MainFrame.Size = UDim2.new(0, 400, 0, 300)
+    MainFrame.Position = UDim2.new(0.5, -200, 0.5, -150)
+    MainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    MainFrame.BorderSizePixel = 0
+    MainFrame.Active = true
+    MainFrame.Draggable = true
+    MainFrame.Parent = ScreenGui
 
-    -- Título da janela
-    Window.Title = Instance.new("TextLabel", Window.Frame)
-    Window.Title.Size = UDim2.new(1, 0, 0, 30)
-    Window.Title.BackgroundTransparency = 1
-    Window.Title.Text = Window.Name
-    Window.Title.TextColor3 = Color3.fromRGB(255, 255, 255)
-    Window.Title.TextSize = 24
+    local TopBar = Instance.new("Frame")
+    TopBar.Size = UDim2.new(1, 0, 0, 30)
+    TopBar.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+    TopBar.Parent = MainFrame
 
-    -- Botões de controle
-    local MinimizeButton = Instance.new("TextButton", Window.Frame)
-    MinimizeButton.Size = UDim2.new(0, 30, 0, 30)
-    MinimizeButton.Position = UDim2.new(1, -35, 0, 5)
-    MinimizeButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-    MinimizeButton.Text = "-"
-    MinimizeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    local Title = Instance.new("TextLabel")
+    Title.Size = UDim2.new(1, -90, 1, 0)
+    Title.Position = UDim2.new(0, 10, 0, 0)
+    Title.BackgroundTransparency = 1
+    Title.Text = config.Name or "MonoDisk Gui"
+    Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Title.Font = Enum.Font.Gotham
+    Title.TextSize = 16
+    Title.TextXAlignment = Enum.TextXAlignment.Left
+    Title.Parent = TopBar
 
-    local MaximizeButton = Instance.new("TextButton", Window.Frame)
-    MaximizeButton.Size = UDim2.new(0, 30, 0, 30)
-    MaximizeButton.Position = UDim2.new(1, -70, 0, 5)
-    MaximizeButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-    MaximizeButton.Text = "+"
-    MaximizeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    local Notification = Instance.new("TextLabel")
+    Notification.Size = UDim2.new(0, 250, 0, 40)
+    Notification.Position = UDim2.new(1, -260, 0, 10)
+    Notification.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    Notification.BackgroundTransparency = 0.3
+    Notification.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Notification.Text = "Press 'Right Control' to reopen GUI"
+    Notification.Font = Enum.Font.GothamBold
+    Notification.TextSize = 14
+    Notification.Parent = ScreenGui
 
-    local CloseButton = Instance.new("TextButton", Window.Frame)
-    CloseButton.Size = UDim2.new(0, 30, 0, 30)
-    CloseButton.Position = UDim2.new(1, -105, 0, 5)
-    CloseButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-    CloseButton.Text = "X"
+    task.spawn(function()
+        wait(3)
+        for i = 1, 10 do
+            Notification.TextTransparency = i * 0.1
+            Notification.BackgroundTransparency = 0.3 + (i * 0.07)
+            wait(0.1)
+        end
+        Notification:Destroy()
+    end)
+
+    local CloseButton = Instance.new("TextButton")
+    CloseButton.Size = UDim2.new(0, 30, 1, 0)
+    CloseButton.Position = UDim2.new(1, -30, 0, 0)
+    CloseButton.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+    CloseButton.Text = "✖"
     CloseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    CloseButton.Font = Enum.Font.GothamBold
+    CloseButton.TextSize = 16
+    CloseButton.Parent = TopBar
 
-    -- Função para minimizar a janela
-    MinimizeButton.MouseButton1Click:Connect(function()
-        Window.Frame.Visible = not Window.Frame.Visible
-    end)
-
-    -- Função para maximizar a janela
-    MaximizeButton.MouseButton1Click:Connect(function()
-        if Window.Frame.Size == UDim2.new(0, 500, 0, 300) then
-            Window.Frame.Size = UDim2.new(0, 800, 0, 600)
-        else
-            Window.Frame.Size = UDim2.new(0, 500, 0, 300)
-        end
-    end)
-
-    -- Função para fechar a janela
     CloseButton.MouseButton1Click:Connect(function()
-        Window.UI:Destroy()
+        ScreenGui:Destroy()
     end)
 
-    -- Funcionalidade de movimentação da janela (dragging)
-    local dragging = false
-    local dragStart = nil
-    local startPos = nil
+    local MinimizeButton = Instance.new("TextButton")
+    MinimizeButton.Size = UDim2.new(0, 30, 1, 0)
+    MinimizeButton.Position = UDim2.new(1, -60, 0, 0)
+    MinimizeButton.BackgroundColor3 = Color3.fromRGB(50, 50, 200)
+    MinimizeButton.Text = "🔽"
+    MinimizeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    MinimizeButton.Font = Enum.Font.GothamBold
+    MinimizeButton.TextSize = 16
+    MinimizeButton.Parent = TopBar
 
-    Window.Title.MouseButton1Down:Connect(function(x, y)
-        dragging = true
-        dragStart = Vector2.new(x, y)
-        startPos = Window.Frame.Position
+    local isMinimized = false
+    MinimizeButton.MouseButton1Click:Connect(function()
+        isMinimized = not isMinimized
+        MainFrame.Visible = not isMinimized
     end)
 
-    Window.Title.MouseButton1Up:Connect(function()
-        dragging = false
-    end)
-
-    Window.Title.MouseMoved:Connect(function(x, y)
-        if dragging then
-            local delta = Vector2.new(x, y) - dragStart
-            Window.Frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+    UserInputService.InputBegan:Connect(function(input, gameProcessed)
+        if input.KeyCode == Enum.KeyCode.RightControl and not gameProcessed then
+            isMinimized = not isMinimized
+            MainFrame.Visible = not isMinimized
         end
     end)
 
-    -- Exibir a janela
-    Window.UI.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+    local ResizeButton = Instance.new("TextButton")
+    ResizeButton.Size = UDim2.new(0, 30, 1, 0)
+    ResizeButton.Position = UDim2.new(1, -90, 0, 0)
+    ResizeButton.BackgroundColor3 = Color3.fromRGB(50, 200, 50)
+    ResizeButton.Text = "⛶"
+    ResizeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    ResizeButton.Font = Enum.Font.GothamBold
+    ResizeButton.TextSize = 16
+    ResizeButton.Parent = TopBar
+
+    local isMaximized = false
+    local originalSize = MainFrame.Size
+
+    ResizeButton.MouseButton1Click:Connect(function()
+        isMaximized = not isMaximized
+        if isMaximized then
+            MainFrame.Size = UDim2.new(0, 600, 0, 450)
+        else
+            MainFrame.Size = originalSize
+        end
+    end)
+
+    Window.Frame = MainFrame
+    function Window:Destroy()
+        ScreenGui:Destroy()
+    end
 
     return Window
 end
