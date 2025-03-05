@@ -6,12 +6,10 @@ local MonoDisk = {}
 function MonoDisk:CreateWindow(config)
     local Window = {}
 
-    
     local ScreenGui = Instance.new("ScreenGui")
     ScreenGui.Parent = game:GetService("CoreGui")
     ScreenGui.Name = config.Name or "MonoDisk Gui"
 
-    
     local MainFrame = Instance.new("Frame")
     MainFrame.Size = UDim2.new(0, 400, 0, 300)
     MainFrame.Position = UDim2.new(0.5, -200, 0.5, -150)
@@ -21,13 +19,11 @@ function MonoDisk:CreateWindow(config)
     MainFrame.Draggable = true
     MainFrame.Parent = ScreenGui
 
-
     local TopBar = Instance.new("Frame")
     TopBar.Size = UDim2.new(1, 0, 0, 30)
     TopBar.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
     TopBar.Parent = MainFrame
 
-    
     local Title = Instance.new("TextLabel")
     Title.Size = UDim2.new(1, -90, 1, 0)
     Title.Position = UDim2.new(0, 10, 0, 0)
@@ -39,10 +35,9 @@ function MonoDisk:CreateWindow(config)
     Title.TextXAlignment = Enum.TextXAlignment.Left
     Title.Parent = TopBar
 
-    
     local Notification = Instance.new("TextLabel")
     Notification.Size = UDim2.new(0, 250, 0, 40)
-    Notification.Position = UDim2.new(0.5, -125, 0.5, -20)
+    Notification.Position = UDim2.new(1, -260, 0, 10)
     Notification.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
     Notification.BackgroundTransparency = 0.3
     Notification.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -50,7 +45,6 @@ function MonoDisk:CreateWindow(config)
     Notification.Font = Enum.Font.GothamBold
     Notification.TextSize = 14
     Notification.Parent = ScreenGui
-
 
     task.spawn(function()
         wait(3)
@@ -62,7 +56,6 @@ function MonoDisk:CreateWindow(config)
         Notification:Destroy()
     end)
 
-    
     local CloseButton = Instance.new("TextButton")
     CloseButton.Size = UDim2.new(0, 30, 1, 0)
     CloseButton.Position = UDim2.new(1, -30, 0, 0)
@@ -77,7 +70,6 @@ function MonoDisk:CreateWindow(config)
         ScreenGui:Destroy()
     end)
 
-    
     local MinimizeButton = Instance.new("TextButton")
     MinimizeButton.Size = UDim2.new(0, 30, 1, 0)
     MinimizeButton.Position = UDim2.new(1, -60, 0, 0)
@@ -101,7 +93,6 @@ function MonoDisk:CreateWindow(config)
         end
     end)
 
-    
     local ResizeButton = Instance.new("TextButton")
     ResizeButton.Size = UDim2.new(0, 30, 1, 0)
     ResizeButton.Position = UDim2.new(1, -90, 0, 0)
@@ -124,7 +115,6 @@ function MonoDisk:CreateWindow(config)
         end
     end)
 
-    
     Window.Frame = MainFrame
     function Window:Destroy()
         ScreenGui:Destroy()
