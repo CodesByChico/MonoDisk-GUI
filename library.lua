@@ -4,7 +4,7 @@ function MonoDisk:CreateWindow(title)
     local ScreenGui = Instance.new("ScreenGui")
     local MainFrame = Instance.new("Frame")
     local Title = Instance.new("TextLabel")
-
+    
     -- Propriedades da GUI
     ScreenGui.Parent = game.CoreGui
 
@@ -12,6 +12,7 @@ function MonoDisk:CreateWindow(title)
     MainFrame.Position = UDim2.new(0.5, -200, 0.5, -200)
     MainFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
     MainFrame.BorderSizePixel = 2
+    MainFrame.Visible = false  -- Inicialmente invisível
     MainFrame.Parent = ScreenGui
 
     Title.Size = UDim2.new(1, 0, 0, 30)
@@ -77,6 +78,20 @@ function MonoDisk:CreateWindow(title)
             callback(defaultState)  -- Chama o callback com o novo estado do toggle
         end)
     end
+
+    -- Criar o botão de abrir/fechar a GUI com imagem
+    local ToggleButton = Instance.new("ImageButton")
+    ToggleButton.Size = UDim2.new(0, 50, 0, 50)
+    ToggleButton.Position = UDim2.new(0, 10, 0, 10)  -- Canto superior esquerdo da tela
+    ToggleButton.Image = "rbxassetid://PUT_YOUR_IMAGE_ID_HERE"  -- Defina o ID da imagem do botão
+    ToggleButton.BackgroundTransparency = 1
+    ToggleButton.Parent = ScreenGui
+
+    -- Lógica para alternar a visibilidade da GUI
+    ToggleButton.MouseButton1Click:Connect(function()
+        local isVisible = MainFrame.Visible
+        MainFrame.Visible = not isVisible
+    end)
 
     return MainFrame
 end
