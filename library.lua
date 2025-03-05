@@ -1,19 +1,25 @@
 local MonoDisk = {}
 
 function MonoDisk:CreateWindow(title)
+    -- Criar a ScreenGui e a janela
     local ScreenGui = Instance.new("ScreenGui")
     local MainFrame = Instance.new("Frame")
     local Title = Instance.new("TextLabel")
+    local ButtonFrame = Instance.new("Frame")
 
-    -- Propriedades da GUI
+    -- Propriedades iniciais
     ScreenGui.Parent = game.CoreGui
+    ScreenGui.Enabled = false  -- Inicialmente a GUI está desabilitada
 
+    -- Configurações da janela principal
     MainFrame.Size = UDim2.new(0, 400, 0, 400)
     MainFrame.Position = UDim2.new(0.5, -200, 0.5, -200)
     MainFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
     MainFrame.BorderSizePixel = 2
+    MainFrame.Visible = false  -- Inicialmente a janela está invisível
     MainFrame.Parent = ScreenGui
 
+    -- Título da janela
     Title.Size = UDim2.new(1, 0, 0, 30)
     Title.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
     Title.Text = title or "MonoDisk GUI"
@@ -22,33 +28,7 @@ function MonoDisk:CreateWindow(title)
     Title.TextSize = 18
     Title.Parent = MainFrame
 
-    -- Função para permitir o movimento da janela
-    local dragToggle = false
-    local dragStart = nil
-    local startPos = nil
-
-    -- Iniciar o movimento quando o mouse é pressionado no título
-    Title.MouseButton1Down:Connect(function(input)
-        dragToggle = true
-        dragStart = input.Position
-        startPos = MainFrame.Position
-    end)
-
-    -- Parar o movimento quando o mouse é solto
-    Title.MouseButton1Up:Connect(function()
-        dragToggle = false
-    end)
-
-    -- Atualizar a posição da janela enquanto o mouse se move
-    game:GetService("UserInputService").InputChanged:Connect(function(input)
-        if dragToggle then
-            local delta = input.Position - dragStart
-            MainFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-        end
-    end)
-
-    -- Frame onde os botões e toggles serão adicionados
-    local ButtonFrame = Instance.new("Frame")
+    -- Frame para os botões e toggles
     ButtonFrame.Size = UDim2.new(1, 0, 1, -30)
     ButtonFrame.Position = UDim2.new(0, 0, 0, 30)
     ButtonFrame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
@@ -102,6 +82,21 @@ function MonoDisk:CreateWindow(title)
             callback(defaultState)  -- Chama o callback com o novo estado do toggle
         end)
     end
+
+    -- Criar o botão de abrir/fechar a GUI
+    local ToggleButton = Instance.new("TextButton")
+    ToggleButton.Size = UDim2.new(0, 100, 0, 40)
+    ToggleButton.Position = UDim2.new(0, 10, 0, 10)
+    ToggleButton.Text = "Abrir/Fechar"
+    ToggleButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+    ToggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    ToggleButton.Parent = ScreenGui
+
+    -- Lógica para alternar a visibilidade da GUI
+    ToggleButton.MouseButton1Click:Connect(function()
+        local isVisible = MainFrame.Visible
+        MainFrame.Visible = not isVisible
+    end)
 
     return MainFrame
 end
