@@ -89,8 +89,7 @@ function MonoDisk:CreateWindow(title)
 
     -- Lógica para alternar a visibilidade da GUI
     ToggleButton.MouseButton1Click:Connect(function()
-        local isVisible = MainFrame.Visible
-        MainFrame.Visible = not isVisible
+        MainFrame.Visible = not MainFrame.Visible
     end)
 
     return MainFrame
