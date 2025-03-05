@@ -1,11 +1,6 @@
-local UserInputService = game:GetService("UserInputService")
-local RunService = game:GetService("RunService")
-
 local MonoDisk = {}
 
 function MonoDisk:CreateWindow(config)
-    local Window = {}
-
     local ScreenGui = Instance.new("ScreenGui")
     ScreenGui.Parent = game:GetService("CoreGui")
     ScreenGui.Name = config.Name or "MonoDisk Gui"
@@ -34,27 +29,6 @@ function MonoDisk:CreateWindow(config)
     Title.TextSize = 16
     Title.TextXAlignment = Enum.TextXAlignment.Left
     Title.Parent = TopBar
-
-    local Notification = Instance.new("TextLabel")
-    Notification.Size = UDim2.new(0, 250, 0, 40)
-    Notification.Position = UDim2.new(1, -260, 0, 10)
-    Notification.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-    Notification.BackgroundTransparency = 0.3
-    Notification.TextColor3 = Color3.fromRGB(255, 255, 255)
-    Notification.Text = "Press 'Right Control' to reopen GUI"
-    Notification.Font = Enum.Font.GothamBold
-    Notification.TextSize = 14
-    Notification.Parent = ScreenGui
-
-    task.spawn(function()
-        wait(3)
-        for i = 1, 10 do
-            Notification.TextTransparency = i * 0.1
-            Notification.BackgroundTransparency = 0.3 + (i * 0.07)
-            wait(0.1)
-        end
-        Notification:Destroy()
-    end)
 
     local CloseButton = Instance.new("TextButton")
     CloseButton.Size = UDim2.new(0, 30, 1, 0)
@@ -86,6 +60,7 @@ function MonoDisk:CreateWindow(config)
         MainFrame.Visible = not isMinimized
     end)
 
+    local UserInputService = game:GetService("UserInputService")
     UserInputService.InputBegan:Connect(function(input, gameProcessed)
         if input.KeyCode == Enum.KeyCode.RightControl and not gameProcessed then
             isMinimized = not isMinimized
@@ -115,12 +90,12 @@ function MonoDisk:CreateWindow(config)
         end
     end)
 
-    Window.Frame = MainFrame
-    function Window:Destroy()
-        ScreenGui:Destroy()
-    end
-
-    return Window
+    return {
+        Frame = MainFrame,
+        Destroy = function()
+            ScreenGui:Destroy()
+        end
+    }
 end
 
 return MonoDisk
