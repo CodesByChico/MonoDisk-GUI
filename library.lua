@@ -22,35 +22,30 @@ function MonoDisk:CreateWindow(title)
     Title.TextSize = 18
     Title.Parent = MainFrame
 
-    -- Função para tornar a janela arrastável
-    local dragging, dragInput, dragStart, startPos
+    -- Função para criar uma seção
+    function MonoDisk:CreateSection(name)
+        local SectionFrame = Instance.new("Frame")
+        local SectionTitle = Instance.new("TextLabel")
 
-    Title.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
-            dragging = true
-            dragStart = input.Position
-            startPos = MainFrame.Position
+        SectionFrame.Size = UDim2.new(1, 0, 0, 50)
+        SectionFrame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+        SectionFrame.Parent = MainFrame
 
-            input.Changed:Connect(function()
-                if input.UserInputState == Enum.UserInputState.End then
-                    dragging = false
-                end
-            end)
-        end
-    end)
+        SectionTitle.Size = UDim2.new(1, 0, 0, 30)
+        SectionTitle.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+        SectionTitle.Text = name or "Nova Seção"
+        SectionTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+        SectionTitle.Font = Enum.Font.SourceSansBold
+        SectionTitle.TextSize = 16
+        SectionTitle.Parent = SectionFrame
 
-    Title.InputChanged:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseMovement then
-            dragInput = input
-        end
-    end)
+        return SectionFrame
+    end
 
-    game:GetService("UserInputService").InputChanged:Connect(function(input)
-        if input == dragInput and dragging then
-            local delta = input.Position - dragStart
-            MainFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-        end
-    end)
+    -- Função para criar uma seção com o nome do jogador
+    function MonoDisk:AddSection(name)
+        return MonoDisk:CreateSection(name)
+    end
 
     return MainFrame
 end
