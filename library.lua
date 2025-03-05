@@ -1,6 +1,5 @@
 local MonoDisk = {}
 
--- Função para criar a janela principal
 function MonoDisk:CreateWindow(title)
     local ScreenGui = Instance.new("ScreenGui")
     local MainFrame = Instance.new("Frame")
@@ -23,47 +22,26 @@ function MonoDisk:CreateWindow(title)
     Title.TextSize = 18
     Title.Parent = MainFrame
 
-    -- Função para criar botões de seções (dinamicamente)
-    local SectionButtonsFrame = Instance.new("Frame")
-    SectionButtonsFrame.Size = UDim2.new(1, 0, 0, 50)
-    SectionButtonsFrame.Position = UDim2.new(0, 0, 0, 30)
-    SectionButtonsFrame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-    SectionButtonsFrame.Parent = MainFrame
+    -- Frame onde os botões serão adicionados
+    local ButtonFrame = Instance.new("Frame")
+    ButtonFrame.Size = UDim2.new(1, 0, 0, 50)
+    ButtonFrame.Position = UDim2.new(0, 0, 0, 30)
+    ButtonFrame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    ButtonFrame.Parent = MainFrame
 
-    -- Tabela para armazenar botões de seções
-    local sectionButtons = {}
+    -- Função para adicionar botões
+    function MonoDisk:AddButton(text, action)
+        local Button = Instance.new("TextButton")
+        Button.Size = UDim2.new(0, 100, 0, 30)
+        Button.Text = text
+        Button.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+        Button.TextColor3 = Color3.fromRGB(255, 255, 255)
+        Button.Parent = ButtonFrame
 
-    -- Função para criar uma nova seção com botão opcional
-    function MonoDisk:AddSection(name)
-        local SectionButton = Instance.new("TextButton")
-        SectionButton.Size = UDim2.new(0, 100, 0, 30)
-        SectionButton.Text = name or "Nova Seção"
-        SectionButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-        SectionButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-        SectionButton.Parent = SectionButtonsFrame
-
-        -- Criando a seção
-        local NewSection = Instance.new("Frame")
-        NewSection.Size = UDim2.new(1, 0, 0, 200)
-        NewSection.Position = UDim2.new(0, 0, 0, 80)
-        NewSection.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
-        NewSection.Visible = false  -- A seção começa invisível
-        NewSection.Parent = MainFrame
-
-        -- Quando o botão da seção for clicado, a seção correspondente é mostrada
-        SectionButton.MouseButton1Click:Connect(function()
-            -- Torna todas as seções invisíveis
-            for _, section in pairs(sectionButtons) do
-                section.SectionFrame.Visible = false
-            end
-            -- Torna a seção selecionada visível
-            NewSection.Visible = true
+        -- Conectar a ação ao botão
+        Button.MouseButton1Click:Connect(function()
+            action()  -- Chama a função definida pelo jogador para o botão
         end)
-
-        -- Armazena o botão da seção e a respectiva Frame para controle
-        table.insert(sectionButtons, {Button = SectionButton, SectionFrame = NewSection})
-
-        return NewSection
     end
 
     return MainFrame
