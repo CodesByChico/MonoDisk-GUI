@@ -10,6 +10,6 @@ A Roblox GUI library inspired by Rayfield! 🚀
 To use MonoDisk Gui in your script:  
 
 ```lua
-local MonoDisk = loadstring(game:HttpGet("YOUR_LIBRARY_URL_HERE"))()
+local MonoDisk = loadstring(game:HttpGet("https://raw.githubusercontent.com/CodesByChico/MonoDisk-GUI/refs/heads/main/library.lua"))()
 local Window = MonoDisk:CreateWindow({ Name = "My Hub" })
 
