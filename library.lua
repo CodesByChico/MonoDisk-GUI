@@ -1,143 +1,100 @@
-local MonoDisk = {}
+-- MonoDisk Gui Library
 
-function MonoDisk:CreateWindow(config)
+local MonoDisk = {}
+MonoDisk.__index = MonoDisk
+
+-- Função para criar a janela da MonoDisk Gui
+function MonoDisk:CreateWindow(options)
     local Window = {}
 
-    -- Configuração do tema e outros parâmetros
-    local Name = config.Name or "MonoDisk Gui"
-    local Icon = config.Icon or 0
-    local LoadingTitle = config.LoadingTitle or "MonoDisk"
-    local LoadingSubtitle = config.LoadingSubtitle or "by Chico"
-    local Theme = config.Theme or "Default"
-    local DisablePrompts = config.DisableMonoDiskPrompts or false
-    local DisableBuildWarnings = config.DisableBuildWarnings or false
+    -- Definições iniciais
+    Window.Name = options.Name or "MonoDisk Window"
+    Window.Icon = options.Icon or 0
+    Window.LoadingTitle = options.LoadingTitle or "Loading..."
+    Window.LoadingSubtitle = options.LoadingSubtitle or "by HpLowes"
+    Window.Theme = options.Theme or "Default"
 
-    -- Configuração do sistema de chave
-    local KeySystem = config.KeySystem or false
-    local KeySettings = config.KeySettings or {}
+    -- Criação da UI da janela
+    Window.UI = Instance.new("ScreenGui")
+    Window.Frame = Instance.new("Frame", Window.UI)
+    Window.Frame.Size = UDim2.new(0, 500, 0, 300)
+    Window.Frame.Position = UDim2.new(0.5, -250, 0.5, -150)
+    Window.Frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    Window.Frame.BorderSizePixel = 0
 
-    local Discord = config.Discord or {}
-    local ConfigurationSaving = config.ConfigurationSaving or {}
+    -- Título da janela
+    Window.Title = Instance.new("TextLabel", Window.Frame)
+    Window.Title.Size = UDim2.new(1, 0, 0, 30)
+    Window.Title.BackgroundTransparency = 1
+    Window.Title.Text = Window.Name
+    Window.Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Window.Title.TextSize = 24
 
-    local function createMainGui()
-        local ScreenGui = Instance.new("ScreenGui")
-        ScreenGui.Parent = game:GetService("CoreGui")
-        ScreenGui.Name = Name
+    -- Botões de controle
+    local MinimizeButton = Instance.new("TextButton", Window.Frame)
+    MinimizeButton.Size = UDim2.new(0, 30, 0, 30)
+    MinimizeButton.Position = UDim2.new(1, -35, 0, 5)
+    MinimizeButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    MinimizeButton.Text = "-"
+    MinimizeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 
-        local MainFrame = Instance.new("Frame")
-        MainFrame.Size = UDim2.new(0, 400, 0, 300)
-        MainFrame.Position = UDim2.new(0.5, -200, 0.5, -150)
-        MainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-        MainFrame.BorderSizePixel = 0
-        MainFrame.Active = true
-        MainFrame.Draggable = true
-        MainFrame.Parent = ScreenGui
+    local MaximizeButton = Instance.new("TextButton", Window.Frame)
+    MaximizeButton.Size = UDim2.new(0, 30, 0, 30)
+    MaximizeButton.Position = UDim2.new(1, -70, 0, 5)
+    MaximizeButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    MaximizeButton.Text = "+"
+    MaximizeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 
-        local TopBar = Instance.new("Frame")
-        TopBar.Size = UDim2.new(1, 0, 0, 30)
-        TopBar.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-        TopBar.Parent = MainFrame
+    local CloseButton = Instance.new("TextButton", Window.Frame)
+    CloseButton.Size = UDim2.new(0, 30, 0, 30)
+    CloseButton.Position = UDim2.new(1, -105, 0, 5)
+    CloseButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    CloseButton.Text = "X"
+    CloseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 
-        local Title = Instance.new("TextLabel")
-        Title.Size = UDim2.new(1, -90, 1, 0)
-        Title.Position = UDim2.new(0, 10, 0, 0)
-        Title.BackgroundTransparency = 1
-        Title.Text = Name
-        Title.TextColor3 = Color3.fromRGB(255, 255, 255)
-        Title.Font = Enum.Font.Gotham
-        Title.TextSize = 16
-        Title.TextXAlignment = Enum.TextXAlignment.Left
-        Title.Parent = TopBar
+    -- Função para minimizar a janela
+    MinimizeButton.MouseButton1Click:Connect(function()
+        Window.Frame.Visible = not Window.Frame.Visible
+    end)
 
-        local CloseButton = Instance.new("TextButton")
-        CloseButton.Size = UDim2.new(0, 30, 1, 0)
-        CloseButton.Position = UDim2.new(1, -30, 0, 0)
-        CloseButton.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
-        CloseButton.Text = "✖"
-        CloseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-        CloseButton.Font = Enum.Font.GothamBold
-        CloseButton.TextSize = 16
-        CloseButton.Parent = TopBar
-
-        CloseButton.MouseButton1Click:Connect(function()
-            ScreenGui:Destroy()
-        end)
-
-        Window.Frame = MainFrame
-        function Window:Destroy()
-            ScreenGui:Destroy()
+    -- Função para maximizar a janela
+    MaximizeButton.MouseButton1Click:Connect(function()
+        if Window.Frame.Size == UDim2.new(0, 500, 0, 300) then
+            Window.Frame.Size = UDim2.new(0, 800, 0, 600)
+        else
+            Window.Frame.Size = UDim2.new(0, 500, 0, 300)
         end
+    end)
 
-        return Window
-    end
+    -- Função para fechar a janela
+    CloseButton.MouseButton1Click:Connect(function()
+        Window.UI:Destroy()
+    end)
 
-    -- Função para criar o sistema de chave
-    local function createKeyScreen()
-        if KeySystem then
-            local KeyScreen = Instance.new("ScreenGui")
-            KeyScreen.Parent = game:GetService("CoreGui")
+    -- Funcionalidade de movimentação da janela (dragging)
+    local dragging = false
+    local dragStart = nil
+    local startPos = nil
 
-            local Frame = Instance.new("Frame")
-            Frame.Size = UDim2.new(0, 400, 0, 250)
-            Frame.Position = UDim2.new(0.5, -200, 0.5, -125)
-            Frame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-            Frame.BorderSizePixel = 0
-            Frame.Parent = KeyScreen
+    Window.Title.MouseButton1Down:Connect(function(x, y)
+        dragging = true
+        dragStart = Vector2.new(x, y)
+        startPos = Window.Frame.Position
+    end)
 
-            local Title = Instance.new("TextLabel")
-            Title.Size = UDim2.new(1, 0, 0.2, 0)
-            Title.BackgroundTransparency = 1
-            Title.Text = KeySettings.Title or "Enter the Key"
-            Title.TextColor3 = Color3.fromRGB(255, 255, 255)
-            Title.Font = Enum.Font.GothamBold
-            Title.TextSize = 18
-            Title.TextXAlignment = Enum.TextXAlignment.Center
-            Title.Parent = Frame
+    Window.Title.MouseButton1Up:Connect(function()
+        dragging = false
+    end)
 
-            local KeyInput = Instance.new("TextBox")
-            KeyInput.Size = UDim2.new(1, -20, 0.3, 0)
-            KeyInput.Position = UDim2.new(0, 10, 0.3, 10)
-            KeyInput.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-            KeyInput.TextColor3 = Color3.fromRGB(255, 255, 255)
-            KeyInput.Font = Enum.Font.Gotham
-            KeyInput.TextSize = 16
-            KeyInput.PlaceholderText = KeySettings.Note or "Enter Key..."
-            KeyInput.Text = ""
-            KeyInput.Parent = Frame
-
-            local SubmitButton = Instance.new("TextButton")
-            SubmitButton.Size = UDim2.new(1, -20, 0.2, 0)
-            SubmitButton.Position = UDim2.new(0, 10, 0.8, -10)
-            SubmitButton.BackgroundColor3 = Color3.fromRGB(100, 150, 250)
-            SubmitButton.Text = "Submit"
-            SubmitButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-            SubmitButton.Font = Enum.Font.GothamBold
-            SubmitButton.TextSize = 16
-            SubmitButton.Parent = Frame
-
-            SubmitButton.MouseButton1Click:Connect(function()
-                local inputKey = KeyInput.Text
-                local validKeys = KeySettings.Key or {}
-
-                for _, key in pairs(validKeys) do
-                    if inputKey == key then
-                        KeyScreen:Destroy()
-                        createMainGui()
-                        return
-                    end
-                end
-
-                KeyInput.Text = ""
-                KeyInput.PlaceholderText = "Incorrect Key! Try again."
-            end)
+    Window.Title.MouseMoved:Connect(function(x, y)
+        if dragging then
+            local delta = Vector2.new(x, y) - dragStart
+            Window.Frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
         end
-    end
+    end)
 
-    if KeySystem then
-        createKeyScreen()
-    else
-        createMainGui()
-    end
+    -- Exibir a janela
+    Window.UI.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
 
     return Window
 end
