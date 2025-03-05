@@ -6,8 +6,8 @@ function MonoDisk:CreateWindow(config)
     -- Configuração do tema e outros parâmetros
     local Name = config.Name or "MonoDisk Gui"
     local Icon = config.Icon or 0
-    local LoadingTitle = config.LoadingTitle or "MonoDisk Interface Suite"
-    local LoadingSubtitle = config.LoadingSubtitle or "by HpLowes"
+    local LoadingTitle = config.LoadingTitle or "MonoDisk"
+    local LoadingSubtitle = config.LoadingSubtitle or "by Chico"
     local Theme = config.Theme or "Default"
     local DisablePrompts = config.DisableMonoDiskPrompts or false
     local DisableBuildWarnings = config.DisableBuildWarnings or false
