@@ -23,20 +23,23 @@ function MonoDisk:CreateWindow(title)
     Title.Parent = MainFrame
 
     -- Função para permitir o movimento da janela
-    local dragToggle = nil
+    local dragToggle = false
     local dragStart = nil
     local startPos = nil
 
+    -- Iniciar o movimento quando o mouse é pressionado no título
     Title.MouseButton1Down:Connect(function(input)
         dragToggle = true
         dragStart = input.Position
         startPos = MainFrame.Position
     end)
 
+    -- Parar o movimento quando o mouse é solto
     Title.MouseButton1Up:Connect(function()
         dragToggle = false
     end)
 
+    -- Atualizar a posição da janela enquanto o mouse se move
     game:GetService("UserInputService").InputChanged:Connect(function(input)
         if dragToggle then
             local delta = input.Position - dragStart
