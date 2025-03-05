@@ -1,2 +1,15 @@
-# MonoDisk-GUI
-A Gui library named by a friend of mine on discord lol
+# MonoDisk Gui 🌙💾  
+A Roblox GUI library inspired by Rayfield! 🚀  
+
+## ✨ Features  
+- ✅ Modern and minimalistic design  
+- ✅ Easy to use and customize  
+- ✅ Support for multiple components (coming soon!)  
+
+## 📦 Installation  
+To use MonoDisk Gui in your script:  
+
+```lua
+local MonoDisk = loadstring(game:HttpGet("YOUR_LIBRARY_URL_HERE"))()
+local Window = MonoDisk:CreateWindow({ Name = "My Hub" })
+
